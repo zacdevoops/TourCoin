@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">Photo Tourcoin en preparation</title>
+  <description id="description">Visuel temporaire utilise en attente d'une photographie verifiee du vehicule.</description>
+  <rect width="1600" height="1000" fill="#141515"/>
+  <path d="M250 640h1100" stroke="#393a37" stroke-width="2"/>
+  <path d="M420 608c44-118 137-189 277-214h270c105 20 181 87 230 201l87 26c39 12 66 48 66 89v26H250v-45c0-35 23-66 57-76l113-7Z" fill="none" stroke="#c8a96b" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="490" cy="736" r="82" fill="#141515" stroke="#f5f1e8" stroke-width="10"/>
+  <circle cx="1110" cy="736" r="82" fill="#141515" stroke="#f5f1e8" stroke-width="10"/>
+  <path d="M599 598h436l-112-135H737L599 598Z" fill="#1f2020" stroke="#aca99f" stroke-width="7" stroke-linejoin="round"/>
+  <text x="800" y="208" text-anchor="middle" fill="#f5f1e8" font-family="Arial, sans-serif" font-size="64" font-weight="700" letter-spacing="10">TOURCOIN</text>
+  <text x="800" y="292" text-anchor="middle" fill="#aca99f" font-family="Arial, sans-serif" font-size="30" letter-spacing="3">PHOTO VERIFIEE EN PREPARATION</text>
+</svg>

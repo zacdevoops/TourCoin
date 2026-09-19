@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+node_modules
+
+# next
+/.next
+.next
+/out
+
+# production
+/build
+
+# local environment
+.env
+.env.local
+.env.*.local
+.env*
+!.env.example
+
+# testing and tooling
+/coverage
+*.tsbuildinfo
+
+# operating systems and editors
+.DS_Store
+.vercel
+supabase/.temp/

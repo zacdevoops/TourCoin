@@ -1,0 +1,26 @@
+{
+  "projectRef": "bymcdiukbibzlaxusrjf",
+  "uploaded": [
+    {
+      "slug": "citroen-c3",
+      "id": "280b76c5-c731-46ff-b42c-47787903990b",
+      "image_path": "280b76c5-c731-46ff-b42c-47787903990b/main.jpg"
+    },
+    {
+      "slug": "hyundai-i20",
+      "id": "461c5387-200e-4fdb-98f2-6afbfe8128a5",
+      "image_path": "461c5387-200e-4fdb-98f2-6afbfe8128a5/main.jpg"
+    },
+    {
+      "slug": "kia-rio",
+      "id": "5eb5c54f-8227-47c7-b658-358a6de8e078",
+      "image_path": "5eb5c54f-8227-47c7-b658-358a6de8e078/main.jpg"
+    },
+    {
+      "slug": "renault-taliant",
+      "id": "a9b802b2-b76f-4914-a2d4-3702df0f7680",
+      "image_path": "a9b802b2-b76f-4914-a2d4-3702df0f7680/main.jpg"
+    }
+  ],
+  "at": "2026-09-19T11:56:24.059Z"
+}
