@@ -9,10 +9,17 @@ export function casablancaCalendarDate(date = new Date()): string {
   }).format(date);
 }
 
+export const RETURN_DATE_AFTER_DEPARTURE_MESSAGE =
+  "La date de retour doit être postérieure à la date de départ.";
+
 export function addCalendarDays(isoDate: string, days: number): string {
   const [year, month, day] = isoDate.split("-").map(Number);
   const next = new Date(Date.UTC(year, month - 1, day + days));
   return next.toISOString().slice(0, 10);
+}
+
+export function isReturnAfterDeparture(pickupDate: string, returnDate: string) {
+  return Boolean(pickupDate && returnDate && returnDate > pickupDate);
 }
 
 function timeZoneOffset(timestamp: number): number {

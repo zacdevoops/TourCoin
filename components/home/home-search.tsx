@@ -3,8 +3,12 @@
 import { CalendarDays, MapPin } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
-import { PICKUP_LOCATIONS } from "@/lib/booking/constants";
-import { addCalendarDays } from "@/lib/booking/datetime";
+import { isPickupLocationSlug, PICKUP_LOCATIONS } from "@/lib/booking/constants";
+import {
+  addCalendarDays,
+  isReturnAfterDeparture,
+  RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
+} from "@/lib/booking/datetime";
 
 const fieldClass =
   "field mt-2 min-h-12 border-line bg-ink text-ivory focus:border-gold";
@@ -12,8 +16,10 @@ const fieldClass =
 export function HomeSearch({ today }: { today: string }) {
   const returnInputRef = useRef<HTMLInputElement>(null);
   const [pickup, setPickup] = useState("");
+  const [locationError, setLocationError] = useState("");
   const [pickupError, setPickupError] = useState("");
   const [returnError, setReturnError] = useState("");
+  const locationErrorId = "home-search-location-error";
   const pickupErrorId = "home-search-pickup-error";
   const returnErrorId = "home-search-return-error";
   const returnMin = pickup ? addCalendarDays(pickup, 1) : addCalendarDays(today, 1);
@@ -22,9 +28,10 @@ export function HomeSearch({ today }: { today: string }) {
     setPickup(value);
     setPickupError("");
     const returnInput = returnInputRef.current;
-    if (returnInput?.value && returnInput.value <= value) {
+    if (returnInput?.value && !isReturnAfterDeparture(value, returnInput.value)) {
       returnInput.value = "";
-      setReturnError("La date de retour doit être après le départ.");
+      setReturnError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
+      returnInput.focus();
     } else {
       setReturnError("");
     }
@@ -32,9 +39,18 @@ export function HomeSearch({ today }: { today: string }) {
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     const form = event.currentTarget;
-    const pickupValue = String(new FormData(form).get("pickup") ?? "");
-    const returnValue = String(new FormData(form).get("return") ?? "");
+    const data = new FormData(form);
+    const locationValue = String(data.get("location") ?? "");
+    const pickupValue = String(data.get("pickup") ?? "");
+    const returnValue = String(data.get("return") ?? "");
     let invalid = false;
+
+    if (!isPickupLocationSlug(locationValue)) {
+      setLocationError("Sélectionnez un lieu de départ.");
+      invalid = true;
+    } else {
+      setLocationError("");
+    }
 
     if (!pickupValue || pickupValue < today) {
       setPickupError("Choisissez une date de départ à partir d’aujourd’hui.");
@@ -43,8 +59,8 @@ export function HomeSearch({ today }: { today: string }) {
       setPickupError("");
     }
 
-    if (!returnValue || returnValue <= pickupValue) {
-      setReturnError("La date de retour doit être après le départ.");
+    if (!returnValue || !isReturnAfterDeparture(pickupValue, returnValue)) {
+      setReturnError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
       invalid = true;
     } else {
       setReturnError("");
@@ -67,6 +83,7 @@ export function HomeSearch({ today }: { today: string }) {
         method="get"
         onSubmit={onSubmit}
         className="mt-4 grid items-end gap-4 md:grid-cols-2 lg:grid-cols-4"
+        noValidate
       >
         <div>
           <label htmlFor="home-location" className="block text-sm font-semibold text-ivory">
@@ -79,8 +96,12 @@ export function HomeSearch({ today }: { today: string }) {
             id="home-location"
             name="location"
             required
+            aria-required="true"
             className={fieldClass}
             defaultValue=""
+            onChange={() => setLocationError("")}
+            aria-invalid={locationError ? true : undefined}
+            aria-describedby={locationError ? locationErrorId : undefined}
           >
             <option value="" disabled>
               Sélectionnez un lieu
@@ -91,6 +112,11 @@ export function HomeSearch({ today }: { today: string }) {
               </option>
             ))}
           </select>
+          {locationError ? (
+            <p id={locationErrorId} className="mt-2 text-sm text-danger" role="alert">
+              {locationError}
+            </p>
+          ) : null}
         </div>
 
         <div>
@@ -105,6 +131,7 @@ export function HomeSearch({ today }: { today: string }) {
             name="pickup"
             type="date"
             required
+            aria-required="true"
             min={today}
             onChange={(event) => onPickupChange(event.target.value)}
             aria-invalid={pickupError ? true : undefined}
@@ -113,7 +140,7 @@ export function HomeSearch({ today }: { today: string }) {
             suppressHydrationWarning
           />
           {pickupError ? (
-            <p id={pickupErrorId} className="mt-2 text-sm text-danger">
+            <p id={pickupErrorId} className="mt-2 text-sm text-danger" role="alert">
               {pickupError}
             </p>
           ) : null}
@@ -132,6 +159,7 @@ export function HomeSearch({ today }: { today: string }) {
             name="return"
             type="date"
             required
+            aria-required="true"
             min={returnMin}
             onChange={() => setReturnError("")}
             aria-invalid={returnError ? true : undefined}
@@ -140,7 +168,7 @@ export function HomeSearch({ today }: { today: string }) {
             suppressHydrationWarning
           />
           {returnError ? (
-            <p id={returnErrorId} className="mt-2 text-sm text-danger">
+            <p id={returnErrorId} className="mt-2 text-sm text-danger" role="alert">
               {returnError}
             </p>
           ) : null}

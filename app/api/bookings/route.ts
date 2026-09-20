@@ -74,7 +74,9 @@ export async function POST(request: Request) {
     const field =
       typeof firstIssue?.path[0] === "string" ? firstIssue.path[0] : "";
     return errorResponse(
-      validationMessages[field] ?? "Veuillez vérifier les informations saisies.",
+      firstIssue?.message ??
+        validationMessages[field] ??
+        "Veuillez vérifier les informations saisies.",
       400,
     );
   }

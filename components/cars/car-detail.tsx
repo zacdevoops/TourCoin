@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { DoorOpen, Fuel, Gauge, MessageCircle, Users } from "lucide-react";
+import { DoorOpen, Fuel, Gauge, MessageCircle, Phone, Users } from "lucide-react";
 import { hasListedPrice, isYearReview } from "@/content/product-fleet";
 import { carPublicLabel, type Car } from "@/types/domain";
 import { ButtonLink } from "@/components/ui/button-link";
+import { vehicleWhatsAppMessage, whatsappHref, getContactPhoneHref } from "@/lib/contact/channels";
 
 function capitalizeFr(value: string) {
   if (!value) return "";
@@ -19,20 +20,14 @@ function specPills(car: Car) {
   return pills;
 }
 
-function vehicleWhatsAppHref(vehicleName: string) {
-  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "");
-  const text = encodeURIComponent(`Bonjour, je souhaite avoir des informations sur le ${vehicleName}.`);
-  return number ? `https://wa.me/${number}?text=${text}` : "/contact";
-}
-
 export function CarDetail({ car }: { car: Car }) {
   const isFallback = car.imageUrl.includes("tourcoin-vehicle-fallback");
   const listedPrice = hasListedPrice(car.pricePerDay);
   const category = carPublicLabel(car);
   const showYear = !isYearReview(car.year);
   const pills = specPills(car);
-  const whatsappHref = vehicleWhatsAppHref(car.name);
-  const whatsappExternal = whatsappHref.startsWith("https://");
+  const whatsapp = whatsappHref(vehicleWhatsAppMessage(car.name));
+  const phone = getContactPhoneHref();
   const photoAlt = isFallback
     ? `Photographie de ${car.name} en cours de vérification`
     : showYear
@@ -85,19 +80,32 @@ export function CarDetail({ car }: { car: Car }) {
           </ul>
         )}
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <div className="mt-8 flex max-w-[calc(100%-4.75rem)] flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
           <ButtonLink href={`/book?car=${car.id}`} className="min-h-12 w-full rounded-full px-7 sm:w-auto">
             Réserver ce véhicule
           </ButtonLink>
-          <a
-            href={whatsappHref}
-            target={whatsappExternal ? "_blank" : undefined}
-            rel={whatsappExternal ? "noreferrer" : undefined}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-ivory/20 bg-transparent px-7 text-sm font-bold text-ivory transition-colors hover:border-gold sm:w-auto"
-          >
-            <MessageCircle size={18} aria-hidden="true" />
-            WhatsApp
-          </a>
+          {whatsapp ? (
+            <a
+              href={whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-ivory/20 bg-transparent px-7 text-sm font-bold text-ivory transition-colors hover:border-gold sm:w-auto"
+              aria-label={`Contacter Tourcoin sur WhatsApp à propos du ${car.name}`}
+            >
+              <MessageCircle size={18} aria-hidden="true" />
+              WhatsApp
+            </a>
+          ) : null}
+          {phone ? (
+            <a
+              href={phone}
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-ivory/20 bg-transparent px-7 text-sm font-bold text-ivory transition-colors hover:border-gold sm:w-auto"
+              aria-label="Appeler Tourcoin"
+            >
+              <Phone size={18} aria-hidden="true" />
+              Appeler
+            </a>
+          ) : null}
         </div>
 
         {car.description ? (

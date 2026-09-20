@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 import { BOOKING_LOCATIONS } from "@/lib/booking/constants";
-import { bookingDateTimeToDate } from "@/lib/booking/datetime";
+import {
+  bookingDateTimeToDate,
+  isReturnAfterDeparture,
+  RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
+} from "@/lib/booking/datetime";
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -47,11 +51,20 @@ export const bookingInputSchema = z
       });
     }
 
+    if (!isReturnAfterDeparture(input.pickupDate, input.returnDate)) {
+      context.addIssue({
+        code: "custom",
+        path: ["returnDate"],
+        message: RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
+      });
+      return;
+    }
+
     if (!returnAt || !pickupAt || returnAt <= pickupAt) {
       context.addIssue({
         code: "custom",
         path: ["returnDate"],
-        message: "Le retour doit avoir lieu après la prise en charge.",
+        message: RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
       });
     }
   });

@@ -1,9 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 
+import { ContactChoices } from "@/components/contact/contact-choices";
 import { BOOKING_LOCATIONS } from "@/lib/booking/constants";
+import {
+  addCalendarDays,
+  casablancaCalendarDate,
+  isReturnAfterDeparture,
+  RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
+} from "@/lib/booking/datetime";
 import type { BookingCarOption } from "@/lib/booking/fleet";
 
 interface BookingFormProps {
@@ -23,23 +30,32 @@ const labelClass = "block text-sm font-semibold text-ivory";
 
 export function BookingForm({ cars, initialCarId }: BookingFormProps) {
   const router = useRouter();
+  const returnDateRef = useRef<HTMLInputElement>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const minimumDate = useMemo(() => {
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Africa/Casablanca",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).formatToParts(new Date());
-    const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-    return `${value.year}-${value.month}-${value.day}`;
-  }, []);
+  const [pickupDate, setPickupDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [returnError, setReturnError] = useState("");
+  const minimumDate = useMemo(() => casablancaCalendarDate(), []);
+  const returnMin = pickupDate
+    ? addCalendarDays(pickupDate, 1)
+    : addCalendarDays(minimumDate, 1);
+  const returnErrorId = "booking-return-date-error";
+
+  function onPickupDateChange(value: string) {
+    setPickupDate(value);
+    if (returnDate && !isReturnAfterDeparture(value, returnDate)) {
+      setReturnDate("");
+      setReturnError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
+      returnDateRef.current?.focus();
+    } else {
+      setReturnError("");
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setSubmitting(true);
 
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -57,6 +73,15 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
       message: String(data.get("message") ?? ""),
       website: String(data.get("website") ?? ""),
     };
+
+    if (!isReturnAfterDeparture(payload.pickupDate, payload.returnDate)) {
+      setReturnError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
+      setError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
+      returnDateRef.current?.focus();
+      return;
+    }
+
+    setSubmitting(true);
 
     try {
       const response = await fetch("/api/bookings", {
@@ -94,6 +119,7 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
       >
         Aucun véhicule n’est actuellement proposé à la réservation en ligne.
         Contactez-nous pour connaître les disponibilités.
+        <ContactChoices className="mt-5" />
       </div>
     );
   }
@@ -186,6 +212,9 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
               type="date"
               min={minimumDate}
               required
+              value={pickupDate}
+              onChange={(event) => onPickupDateChange(event.target.value)}
+              suppressHydrationWarning
             />
           </label>
           <label className={labelClass}>
@@ -212,12 +241,26 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
           <label className={labelClass}>
             Date
             <input
+              ref={returnDateRef}
               className={fieldClass}
               name="returnDate"
               type="date"
-              min={minimumDate}
+              min={returnMin}
               required
+              value={returnDate}
+              onChange={(event) => {
+                setReturnDate(event.target.value);
+                setReturnError("");
+              }}
+              aria-invalid={returnError ? true : undefined}
+              aria-describedby={returnError ? returnErrorId : undefined}
+              suppressHydrationWarning
             />
+            {returnError ? (
+              <span id={returnErrorId} className="mt-2 block text-sm font-normal text-danger" role="alert">
+                {returnError}
+              </span>
+            ) : null}
           </label>
           <label className={labelClass}>
             Heure

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Menu } from "lucide-react";
+
+import { MobileNav } from "@/components/layout/mobile-nav";
 
 const links = [
   ["Accueil", "/"],
@@ -20,22 +21,11 @@ export function Header() {
               {label}
             </Link>
           ))}
-          <Link href="/cars" className="inline-flex min-h-11 items-center rounded-sm bg-gold px-5 text-sm font-bold text-ink hover:bg-gold-strong">
+          <Link href="/book" className="inline-flex min-h-11 items-center rounded-sm bg-gold px-5 text-sm font-bold text-ink hover:bg-gold-strong">
             Réserver
           </Link>
         </nav>
-        <details className="group relative md:hidden">
-          <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-sm border border-line" aria-label="Ouvrir le menu">
-            <Menu aria-hidden="true" />
-          </summary>
-          <nav className="absolute right-0 mt-3 grid w-60 rounded-md border border-line bg-surface p-3 shadow-premium" aria-label="Navigation mobile">
-            {links.map(([label, href]) => (
-              <Link key={href} href={href} className="flex min-h-11 items-center rounded-sm px-3 text-sm hover:bg-white/5">
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </details>
+        <MobileNav />
       </div>
     </header>
   );

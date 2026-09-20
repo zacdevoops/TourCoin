@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { ContactChoices } from "@/components/contact/contact-choices";
+
 export function Footer() {
   return (
     <footer className="border-t border-line bg-surface">
@@ -12,23 +14,18 @@ export function Footer() {
           <p className="eyebrow mb-4">Explorer</p>
           <div className="grid gap-2 text-sm">
             <Link className="min-h-11 py-3 hover:text-gold" href="/cars">Nos voitures</Link>
+            <Link className="min-h-11 py-3 hover:text-gold" href="/book">Réserver</Link>
             <Link className="min-h-11 py-3 hover:text-gold" href="/contact">Contact</Link>
             <Link className="min-h-11 py-3 hover:text-gold" href="/privacy">Confidentialité</Link>
-            <Link className="min-h-11 py-3 hover:text-gold" href="/photo-credits">Crédits photo</Link>
           </div>
         </div>
         <div>
           <p className="eyebrow mb-4">Nous joindre</p>
-          <p className="text-sm leading-7 text-muted">
-            Une équipe basée au Maroc.
-            <br />
-            <Link className="inline-flex min-h-11 items-center text-ivory hover:text-gold" href="/contact">
-              Ouvrir les moyens de contact
-            </Link>
-          </p>
+          <p className="text-sm leading-7 text-muted">Une équipe basée au Maroc.</p>
+          <ContactChoices className="mt-4" />
         </div>
       </div>
-      <div className="border-t border-line py-5 text-center text-xs text-muted">© {new Date().getFullYear()} Tourcoin. Tous droits réservés.</div>
+      <div className="border-t border-line py-5 pb-24 text-center text-xs text-muted">© {new Date().getFullYear()} Tourcoin. Tous droits réservés.</div>
     </footer>
   );
 }

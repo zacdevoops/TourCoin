@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CarCard } from "@/components/cars/car-card";
 import { CarDetail } from "@/components/cars/car-detail";
+import { ContactChoices } from "@/components/contact/contact-choices";
 import { getCar, getFleet } from "@/lib/fleet/queries";
 import { hasListedPrice } from "@/content/product-fleet";
 
@@ -24,7 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CarPage({ params }: Props) {
   const { slug } = await params;
   const result = await getCar(slug);
-  if (result.unavailable) return <div className="container-shell min-h-[65vh] pt-40"><h1 className="font-display text-4xl font-semibold">Catalogue momentanément indisponible</h1><p className="mt-5 text-muted">Contactez notre équipe pour connaître les disponibilités.</p></div>;
+  if (result.unavailable) {
+    return (
+      <div className="container-shell min-h-[65vh] pt-40">
+        <h1 className="font-display text-4xl font-semibold">Catalogue momentanément indisponible</h1>
+        <p className="mt-5 text-muted">Contactez notre équipe pour connaître les disponibilités.</p>
+        <ContactChoices className="mt-6" />
+      </div>
+    );
+  }
   if (!result.car) notFound();
   const car = result.car;
   const listedPrice = hasListedPrice(car.pricePerDay);
