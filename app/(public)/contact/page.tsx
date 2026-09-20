@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import {
+  CONTACT_PHONE,
   getContactPhoneHref,
   whatsappHref,
   WHATSAPP_GENERIC_MESSAGE,
@@ -14,45 +15,29 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
-  const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const whatsapp = whatsappHref(WHATSAPP_GENERIC_MESSAGE);
   const phoneHref = getContactPhoneHref();
 
   return (
-    <div className="container-shell pb-24 pt-40">
-      <div className="grid gap-16 lg:grid-cols-2">
+    <div className="bg-paper pb-24 pt-36 text-charcoal sm:pt-40">
+      <div className="container-shell grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24">
         <div>
           <p className="eyebrow">Parlons de votre trajet</p>
-          <h1 className="mt-4 text-balance font-display text-4xl font-semibold sm:text-6xl">
-            Une équipe locale, à votre écoute.
+          <h1 className="display-tight mt-4 text-balance font-display text-5xl font-semibold sm:text-7xl">
+            Une équipe locale, vraiment à votre écoute.
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
+          <p className="mt-7 max-w-xl text-lg leading-8 text-stone">
             Dites-nous où vous allez et ce dont vous avez besoin. Nous vous répondrons avec une proposition claire et adaptée.
           </p>
         </div>
-        <div className="grid gap-4">
-          {whatsapp ? (
-            <Contact
-              href={whatsapp}
-              icon={<MessageCircle />}
-              title="WhatsApp"
-              detail={whatsappNumber!}
-              external
-            />
-          ) : null}
-          {phoneHref ? (
-            <Contact href={phoneHref} icon={<Phone />} title="Appeler" detail={phone!} />
-          ) : null}
-          {email ? (
-            <Contact href={`mailto:${email}`} icon={<Mail />} title="E-mail" detail={email} />
-          ) : null}
-          <div className="flex min-h-24 items-center gap-5 rounded-md border border-line p-5">
+        <div className="border-t border-black/10">
+          <Contact href={whatsapp} icon={<MessageCircle />} title="WhatsApp" detail="Écrire à un conseiller" external />
+          <Contact href={phoneHref} icon={<Phone />} title="Téléphone" detail={CONTACT_PHONE} />
+          <div className="flex min-h-28 items-center gap-5 border-b border-black/10 py-5">
             <MapPin className="text-gold" />
             <div>
-              <h2 className="font-display text-lg font-semibold">Au Maroc</h2>
-              <p className="mt-1 text-sm text-muted">Marrakech · Casablanca · Agadir · Tanger</p>
+              <h2 className="font-display text-2xl font-semibold">Au Maroc</h2>
+              <p className="mt-1 text-sm text-stone">Marrakech · Casablanca · Agadir · Tanger</p>
             </div>
           </div>
         </div>
@@ -79,13 +64,14 @@ function Contact({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="flex min-h-24 items-center gap-5 rounded-md border border-line p-5 hover:border-gold"
+      className="group flex min-h-28 items-center gap-5 border-b border-black/10 py-5 transition-colors hover:border-gold"
     >
       <span className="text-gold">{icon}</span>
       <div>
-        <h2 className="font-display text-lg font-semibold">{title}</h2>
-        <p className="mt-1 text-sm text-muted">{detail}</p>
+        <h2 className="font-display text-2xl font-semibold">{title}</h2>
+        <p className="mt-1 text-sm text-stone">{detail}</p>
       </div>
+      <ArrowUpRight className="ml-auto size-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
     </a>
   );
 }

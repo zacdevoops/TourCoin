@@ -27,9 +27,9 @@ export default async function CarPage({ params }: Props) {
   const result = await getCar(slug);
   if (result.unavailable) {
     return (
-      <div className="container-shell min-h-[65vh] pt-40">
+      <div className="container-shell min-h-[65vh] bg-paper pt-40 text-charcoal">
         <h1 className="font-display text-4xl font-semibold">Catalogue momentanément indisponible</h1>
-        <p className="mt-5 text-muted">Contactez notre équipe pour connaître les disponibilités.</p>
+        <p className="mt-5 text-stone">Contactez notre équipe pour connaître les disponibilités.</p>
         <ContactChoices className="mt-6" />
       </div>
     );
@@ -44,12 +44,12 @@ export default async function CarPage({ params }: Props) {
     : { "@context": "https://schema.org", "@type": "Product", name: car.name, image: car.imageUrl, description: car.description };
 
   return (
-    <div className="pb-24 pt-28">
+    <div className="bg-paper pb-24 pt-32 text-charcoal sm:pt-36">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="container-shell">
         <CarDetail car={car} />
         {related.length > 0 && (
-          <section className="mt-16 border-t border-line pt-14">
+          <section className="mt-16 border-t border-black/10 pt-14">
             <p className="eyebrow">Dans le même esprit</p>
             <h2 className="mt-3 font-display text-3xl font-semibold">Vous aimerez aussi</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-3">

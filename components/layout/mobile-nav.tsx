@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 const links = [
-  ["Accueil", "/"],
-  ["Nos voitures", "/cars"],
+  ["La flotte", "/cars"],
+  ["Notre service", "/#process"],
   ["Contact", "/contact"],
-  ["Réserver", "/book"],
 ] as const;
 
 export function MobileNav() {
@@ -51,7 +50,7 @@ export function MobileNav() {
       <button
         ref={buttonRef}
         type="button"
-        className="flex size-11 cursor-pointer items-center justify-center rounded-sm border border-line"
+        className="flex size-11 cursor-pointer items-center justify-center rounded-sm border border-white/20"
         aria-expanded={open}
         aria-controls={menuId}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
@@ -62,7 +61,7 @@ export function MobileNav() {
       {open ? (
         <nav
           id={menuId}
-          className="absolute right-0 mt-3 grid w-60 rounded-md border border-line bg-surface p-3 shadow-premium"
+          className="absolute right-0 mt-3 grid w-64 rounded-sm border border-white/10 bg-ink p-3 shadow-premium"
           aria-label="Navigation mobile"
         >
           {links.map(([label, href]) => (
@@ -75,6 +74,13 @@ export function MobileNav() {
               {label}
             </Link>
           ))}
+          <Link
+            href="/book"
+            className="mt-2 flex min-h-11 items-center justify-between rounded-sm bg-white px-3 text-sm font-bold text-charcoal"
+            onClick={() => setOpen(false)}
+          >
+            Réserver <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
         </nav>
       ) : null}
     </div>

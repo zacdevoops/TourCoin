@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, MapPin } from "lucide-react";
+import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { isPickupLocationSlug, PICKUP_LOCATIONS } from "@/lib/booking/constants";
@@ -11,11 +11,27 @@ import {
 } from "@/lib/booking/datetime";
 
 const fieldClass =
-  "field mt-2 min-h-12 border-line bg-ink text-ivory focus:border-gold";
+  "mt-2 min-h-12 w-full rounded-sm border border-black/15 bg-white px-3 text-sm text-charcoal outline-none transition-colors focus:border-charcoal";
 
-export function HomeSearch({ today }: { today: string }) {
+type HomeSearchProps = {
+  today: string;
+  initialValues?: {
+    location?: string;
+    pickup?: string;
+    return?: string;
+  };
+  heading?: string;
+  caption?: string;
+};
+
+export function HomeSearch({
+  today,
+  initialValues = {},
+  heading = "Préparez votre départ",
+  caption = "Lieu, date de départ et date de retour obligatoires",
+}: HomeSearchProps) {
   const returnInputRef = useRef<HTMLInputElement>(null);
-  const [pickup, setPickup] = useState("");
+  const [pickup, setPickup] = useState(initialValues.pickup ?? "");
   const [locationError, setLocationError] = useState("");
   const [pickupError, setPickupError] = useState("");
   const [returnError, setReturnError] = useState("");
@@ -71,24 +87,24 @@ export function HomeSearch({ today }: { today: string }) {
 
   return (
     <section
-      className="rounded-md border border-gold/40 bg-surface p-4 sm:p-5 lg:p-6"
+      className="border border-black/10 bg-white p-5 text-charcoal shadow-card sm:p-7"
       aria-labelledby="home-search-title"
     >
-      <p id="home-search-title" className="text-sm leading-6 text-muted">
-        Sélectionnez votre départ et vos dates — TourCoin confirmera la
-        disponibilité.
-      </p>
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+        <p id="home-search-title" className="font-display text-2xl font-semibold">{heading}</p>
+        <p className="text-xs font-semibold text-stone">{caption}</p>
+      </div>
       <form
         action="/cars"
         method="get"
         onSubmit={onSubmit}
-        className="mt-4 grid items-end gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="mt-5 grid items-end gap-4 md:grid-cols-2 lg:grid-cols-4"
         noValidate
       >
         <div>
-          <label htmlFor="home-location" className="block text-sm font-semibold text-ivory">
+          <label htmlFor="home-location" className="block text-xs font-extrabold text-stone">
             <span className="inline-flex items-center gap-2">
-              <MapPin className="size-4 text-gold" aria-hidden="true" />
+              <MapPin className="size-4 text-stone" aria-hidden="true" />
               Lieu de départ
             </span>
           </label>
@@ -98,7 +114,7 @@ export function HomeSearch({ today }: { today: string }) {
             required
             aria-required="true"
             className={fieldClass}
-            defaultValue=""
+            defaultValue={initialValues.location ?? ""}
             onChange={() => setLocationError("")}
             aria-invalid={locationError ? true : undefined}
             aria-describedby={locationError ? locationErrorId : undefined}
@@ -120,9 +136,9 @@ export function HomeSearch({ today }: { today: string }) {
         </div>
 
         <div>
-          <label htmlFor="home-pickup" className="block text-sm font-semibold text-ivory">
+          <label htmlFor="home-pickup" className="block text-xs font-extrabold text-stone">
             <span className="inline-flex items-center gap-2">
-              <CalendarDays className="size-4 text-gold" aria-hidden="true" />
+              <CalendarDays className="size-4 text-stone" aria-hidden="true" />
               Date de départ
             </span>
           </label>
@@ -133,6 +149,7 @@ export function HomeSearch({ today }: { today: string }) {
             required
             aria-required="true"
             min={today}
+            defaultValue={initialValues.pickup}
             onChange={(event) => onPickupChange(event.target.value)}
             aria-invalid={pickupError ? true : undefined}
             aria-describedby={pickupError ? pickupErrorId : undefined}
@@ -147,9 +164,9 @@ export function HomeSearch({ today }: { today: string }) {
         </div>
 
         <div>
-          <label htmlFor="home-return" className="block text-sm font-semibold text-ivory">
+          <label htmlFor="home-return" className="block text-xs font-extrabold text-stone">
             <span className="inline-flex items-center gap-2">
-              <CalendarDays className="size-4 text-gold" aria-hidden="true" />
+              <CalendarDays className="size-4 text-stone" aria-hidden="true" />
               Date de retour
             </span>
           </label>
@@ -161,6 +178,7 @@ export function HomeSearch({ today }: { today: string }) {
             required
             aria-required="true"
             min={returnMin}
+            defaultValue={initialValues.return}
             onChange={() => setReturnError("")}
             aria-invalid={returnError ? true : undefined}
             aria-describedby={returnError ? returnErrorId : undefined}
@@ -176,9 +194,9 @@ export function HomeSearch({ today }: { today: string }) {
 
         <button
           type="submit"
-          className="min-h-12 w-full rounded-sm bg-gold px-5 font-bold text-ink hover:bg-gold-strong"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-charcoal px-5 font-extrabold text-white transition-colors hover:bg-black"
         >
-          Voir les voitures
+          Voir les voitures <ArrowRight className="size-4" aria-hidden="true" />
         </button>
       </form>
     </section>

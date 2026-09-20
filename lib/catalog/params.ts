@@ -63,13 +63,12 @@ export function sanitizeCatalogValues(
   values: CatalogSearchValues,
 ): CatalogSearchValues {
   const segment = isCarSegment(values.segment) ? values.segment : undefined;
-  const trip = completeTripSearch(values);
   return {
     ...values,
     category: segment ? undefined : isProductCategory(values.category) ? values.category : undefined,
     segment: segment === "suv_urbain" ? segment : undefined,
-    location: trip.location,
-    pickup: trip.pickup,
-    return: trip.return,
+    location: isPickupLocationSlug(values.location) ? values.location : undefined,
+    pickup: isIsoDate(values.pickup) ? values.pickup : undefined,
+    return: isIsoDate(values.return) ? values.return : undefined,
   };
 }

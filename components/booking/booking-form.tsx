@@ -25,8 +25,8 @@ interface BookingApiResponse {
 }
 
 const fieldClass =
-  "field mt-2 transition-colors focus:border-gold focus:outline-none";
-const labelClass = "block text-sm font-semibold text-ivory";
+  "field-light mt-2 transition-colors focus:border-charcoal focus:outline-none";
+const labelClass = "block text-sm font-semibold text-charcoal";
 
 export function BookingForm({ cars, initialCarId }: BookingFormProps) {
   const router = useRouter();
@@ -76,7 +76,6 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
 
     if (!isReturnAfterDeparture(payload.pickupDate, payload.returnDate)) {
       setReturnError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
-      setError(RETURN_DATE_AFTER_DEPARTURE_MESSAGE);
       returnDateRef.current?.focus();
       return;
     }
@@ -114,7 +113,7 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
   if (cars.length === 0) {
     return (
       <div
-        className="rounded-[var(--radius-lg)] border border-line bg-surface-raised p-6 text-muted"
+        className="rounded-sm border border-black/10 bg-white p-6 text-stone"
         role="status"
       >
         Aucun véhicule n’est actuellement proposé à la réservation en ligne.
@@ -126,9 +125,8 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
 
   return (
     <form
-      className="rounded-[var(--radius-lg)] border border-line bg-surface-raised p-5 shadow-premium sm:p-8"
+      className="rounded-sm border border-black/10 bg-white p-5 shadow-card sm:p-8"
       onSubmit={handleSubmit}
-      noValidate={false}
     >
       <div className="grid gap-6 md:grid-cols-2">
         <label className={`${labelClass} md:col-span-2`}>
@@ -189,8 +187,8 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
           />
         </label>
 
-        <fieldset className="grid gap-5 rounded-[var(--radius-md)] border border-line p-4 md:col-span-2 md:grid-cols-2">
-          <legend className="px-2 font-display text-lg font-semibold text-ivory">
+        <fieldset className="grid gap-5 rounded-sm border border-black/10 p-4 md:col-span-2 md:grid-cols-2">
+          <legend className="px-2 font-display text-lg font-semibold text-charcoal">
             Prise en charge
           </legend>
           <label className={`${labelClass} md:col-span-2`}>
@@ -223,8 +221,8 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
           </label>
         </fieldset>
 
-        <fieldset className="grid gap-5 rounded-[var(--radius-md)] border border-line p-4 md:col-span-2 md:grid-cols-2">
-          <legend className="px-2 font-display text-lg font-semibold text-ivory">
+        <fieldset className="grid gap-5 rounded-sm border border-black/10 p-4 md:col-span-2 md:grid-cols-2">
+          <legend className="px-2 font-display text-lg font-semibold text-charcoal">
             Retour
           </legend>
           <label className={`${labelClass} md:col-span-2`}>
@@ -247,6 +245,7 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
               type="date"
               min={returnMin}
               required
+              disabled={!pickupDate}
               value={returnDate}
               onChange={(event) => {
                 setReturnDate(event.target.value);
@@ -269,7 +268,7 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
         </fieldset>
 
         <label className={`${labelClass} md:col-span-2`}>
-          Message <span className="font-normal text-muted">(facultatif)</span>
+          Message <span className="font-normal text-stone">(facultatif)</span>
           <textarea
             className={`${fieldClass} min-h-32 resize-y`}
             name="message"
@@ -294,20 +293,20 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
       <div className="mt-7" aria-live="polite">
         {error ? (
           <p
-            className="mb-4 rounded-[var(--radius-sm)] border border-danger/50 bg-danger/10 p-3 text-sm text-ivory"
+            className="mb-4 rounded-sm border border-danger/40 bg-danger/5 p-3 text-sm text-danger"
             role="alert"
           >
             {error}
           </p>
         ) : null}
         <button
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-[var(--radius-sm)] bg-gold px-6 py-3 font-bold text-ink transition-colors hover:bg-gold-strong disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-sm bg-charcoal px-6 py-3 font-bold text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
           disabled={submitting}
         >
           {submitting ? "Envoi en cours…" : "Envoyer ma demande"}
         </button>
-        <p className="mt-3 text-center text-xs leading-5 text-muted">
+        <p className="mt-3 text-center text-xs leading-5 text-stone">
           L’envoi de ce formulaire constitue une demande. La réservation devient
           définitive après confirmation de disponibilité par notre équipe.
         </p>
