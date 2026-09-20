@@ -2,33 +2,20 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-surface">
-      <div className="container-shell grid gap-10 py-14 md:grid-cols-3">
+    <footer className="border-t border-white/10 bg-ink text-white">
+      <div className="container-shell flex flex-col gap-10 py-12 md:flex-row md:items-end md:justify-between">
         <div>
-          <Link href="/" className="font-display text-xl font-semibold">TOUR<span className="text-gold">COIN</span></Link>
-          <p className="mt-4 max-w-xs text-sm leading-6 text-muted">Location automobile au Maroc, avec un service humain avant, pendant et après votre trajet.</p>
+          <Link href="/" className="text-lg font-extrabold">TOUR<span className="text-gold">COIN</span></Link>
+          <p className="mt-3 max-w-md text-sm leading-6 text-white/55">Location de voitures au Maroc, avec une équipe locale pour confirmer chaque départ.</p>
         </div>
-        <div>
-          <p className="eyebrow mb-4">Explorer</p>
-          <div className="grid gap-2 text-sm">
-            <Link className="min-h-11 py-3 hover:text-gold" href="/cars">Nos voitures</Link>
-            <Link className="min-h-11 py-3 hover:text-gold" href="/contact">Contact</Link>
-            <Link className="min-h-11 py-3 hover:text-gold" href="/privacy">Confidentialité</Link>
-            <Link className="min-h-11 py-3 hover:text-gold" href="/photo-credits">Crédits photo</Link>
-          </div>
-        </div>
-        <div>
-          <p className="eyebrow mb-4">Nous joindre</p>
-          <p className="text-sm leading-7 text-muted">
-            Une équipe basée au Maroc.
-            <br />
-            <Link className="inline-flex min-h-11 items-center text-ivory hover:text-gold" href="/contact">
-              Ouvrir les moyens de contact
-            </Link>
-          </p>
-        </div>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/70" aria-label="Navigation de pied de page">
+          <Link className="min-h-11 py-3 hover:text-white" href="/cars">La flotte</Link>
+          <Link className="min-h-11 py-3 hover:text-white" href="/book">Réserver</Link>
+          <Link className="min-h-11 py-3 hover:text-white" href="/contact">Contact</Link>
+          <Link className="min-h-11 py-3 hover:text-white" href="/privacy">Confidentialité</Link>
+        </nav>
       </div>
-      <div className="border-t border-line py-5 text-center text-xs text-muted">© {new Date().getFullYear()} Tourcoin. Tous droits réservés.</div>
+      <div className="border-t border-white/10 py-5 pb-20 text-center text-xs text-white/40 sm:pb-5">© {new Date().getFullYear()} Tourcoin. Tous droits réservés.</div>
     </footer>
   );
 }

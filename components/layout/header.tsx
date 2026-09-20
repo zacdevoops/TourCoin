@@ -1,41 +1,43 @@
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+
+import { MobileNav } from "@/components/layout/mobile-nav";
 
 const links = [
-  ["Accueil", "/"],
-  ["Nos voitures", "/cars"],
+  ["La flotte", "/cars"],
+  ["Notre service", "/#process"],
   ["Contact", "/contact"],
 ] as const;
 
 export function Header() {
   return (
-    <header className="absolute inset-x-0 top-0 z-30 border-b border-white/10 bg-ink/55 backdrop-blur-md">
-      <div className="container-shell flex min-h-20 items-center justify-between">
-        <Link href="/" className="flex min-h-11 items-center font-display text-xl font-semibold tracking-tight" aria-label="Tourcoin, accueil">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/95 text-white backdrop-blur-xl">
+      <div className="container-shell flex min-h-[4.5rem] items-center justify-between lg:min-h-20">
+        <Link
+          href="/"
+          className="flex min-h-11 items-center text-base font-extrabold text-white"
+          aria-label="Tourcoin, accueil"
+        >
           TOUR<span className="text-gold">COIN</span>
         </Link>
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigation principale">
+        <nav className="hidden items-center gap-9 md:flex" aria-label="Navigation principale">
           {links.map(([label, href]) => (
-            <Link key={href} href={href} className="flex min-h-11 items-center text-sm font-medium text-ivory/80 hover:text-gold">
+            <Link
+              key={href}
+              href={href}
+              className="flex min-h-11 items-center text-sm font-semibold text-ivory/75 transition-colors hover:text-ivory"
+            >
               {label}
             </Link>
           ))}
-          <Link href="/cars" className="inline-flex min-h-11 items-center rounded-sm bg-gold px-5 text-sm font-bold text-ink hover:bg-gold-strong">
-            Réserver
+          <Link
+            href="/book"
+            className="inline-flex min-h-11 items-center gap-2 rounded-sm bg-white px-5 text-sm font-extrabold text-charcoal transition-colors hover:bg-paper-muted"
+          >
+            Réserver <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </nav>
-        <details className="group relative md:hidden">
-          <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-sm border border-line" aria-label="Ouvrir le menu">
-            <Menu aria-hidden="true" />
-          </summary>
-          <nav className="absolute right-0 mt-3 grid w-60 rounded-md border border-line bg-surface p-3 shadow-premium" aria-label="Navigation mobile">
-            {links.map(([label, href]) => (
-              <Link key={href} href={href} className="flex min-h-11 items-center rounded-sm px-3 text-sm hover:bg-white/5">
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </details>
+        <MobileNav />
       </div>
     </header>
   );

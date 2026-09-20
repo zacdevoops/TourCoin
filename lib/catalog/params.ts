@@ -1,4 +1,5 @@
 import { isPickupLocationSlug } from "@/lib/booking/constants";
+import { isReturnAfterDeparture } from "@/lib/booking/datetime";
 import { isCarSegment, isProductCategory } from "@/types/domain";
 
 export type CatalogSearchValues = {
@@ -41,6 +42,21 @@ export function catalogSearchHref(
 
 function isIsoDate(value: string | undefined): value is string {
   return Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value));
+}
+
+export function completeTripSearch(values: CatalogSearchValues) {
+  const location = isPickupLocationSlug(values.location) ? values.location : undefined;
+  const pickup = isIsoDate(values.pickup) ? values.pickup : undefined;
+  const returnDate = isIsoDate(values.return) ? values.return : undefined;
+  if (
+    location &&
+    pickup &&
+    returnDate &&
+    isReturnAfterDeparture(pickup, returnDate)
+  ) {
+    return { location, pickup, return: returnDate };
+  }
+  return {};
 }
 
 export function sanitizeCatalogValues(
