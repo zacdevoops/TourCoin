@@ -25,29 +25,19 @@ export default async function BookingPage({ searchParams }: BookingPageProps) {
   )?.id;
 
   return (
-    <div className="min-h-screen bg-paper pb-24 pt-36 text-charcoal">
+    <div className="min-h-screen bg-paper pb-20 pt-28 text-charcoal sm:pb-24 sm:pt-36">
       <section className="container-shell">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-          <div className="lg:sticky lg:top-28">
-            <p className="eyebrow">Votre séjour commence ici</p>
-            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-balance sm:text-5xl">
-              Demandez votre réservation
-            </h1>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-stone">
-              Indiquez votre véhicule et vos horaires. Notre équipe vérifie la
-              disponibilité puis confirme personnellement votre location.
-            </p>
-            <div className="mt-8 hidden border-y border-black/10 py-5 lg:block">
-              <h2 className="font-display text-lg font-semibold">
-                Une réservation en toute sérénité
-              </h2>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-stone">
-                <li>Tarif du véhicule enregistré avec votre demande</li>
-                <li>Prise en charge dans les principales villes et aéroports</li>
-                <li>Confirmation humaine avant tout engagement définitif</li>
-              </ul>
-            </div>
-          </div>
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
+          <p className="eyebrow">Réservation Tourcoin</p>
+          <h1 className="mt-3 font-display text-4xl font-semibold leading-none text-balance sm:text-6xl">
+            Votre voiture, vos dates, une confirmation claire.
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-stone">
+            Vérifiez le véhicule, indiquez votre trajet et envoyez une demande
+            propre à notre équipe locale.
+          </p>
+        </div>
+        <div className="mx-auto max-w-7xl">
           <BookingForm cars={cars} initialCarId={initialCarId} />
         </div>
       </section>
