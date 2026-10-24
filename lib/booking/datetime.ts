@@ -9,6 +9,27 @@ export function casablancaCalendarDate(date = new Date()): string {
   }).format(date);
 }
 
+export function casablancaCalendarHour(date = new Date()): number {
+  const hour = new Intl.DateTimeFormat("en-GB", {
+    timeZone: CASABLANCA_TIME_ZONE,
+    hour: "2-digit",
+    hourCycle: "h23",
+  })
+    .formatToParts(date)
+    .find((part) => part.type === "hour")?.value;
+
+  return Number(hour ?? "0");
+}
+
+/**
+ * Booking requests use a default pickup time of 10:00 Casablanca time.
+ * Once that time has passed, the earliest selectable pickup date is tomorrow.
+ */
+export function minimumPickupCalendarDate(date = new Date()): string {
+  const today = casablancaCalendarDate(date);
+  return casablancaCalendarHour(date) >= 10 ? addCalendarDays(today, 1) : today;
+}
+
 export const RETURN_DATE_AFTER_DEPARTURE_MESSAGE =
   "La date de retour doit être postérieure à la date de départ.";
 
