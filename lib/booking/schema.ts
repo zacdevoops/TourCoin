@@ -3,6 +3,8 @@ import { z } from "zod";
 import { BOOKING_LOCATIONS } from "@/lib/booking/constants";
 import {
   bookingDateTimeToDate,
+  casablancaCalendarDate,
+  minimumPickupCalendarDate,
   isReturnAfterDeparture,
   RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
 } from "@/lib/booking/datetime";
@@ -43,11 +45,27 @@ export const bookingInputSchema = z
     const pickupAt = bookingDateTimeToDate(input.pickupDate, input.pickupTime);
     const returnAt = bookingDateTimeToDate(input.returnDate, input.returnTime);
 
-    if (!pickupAt || pickupAt.getTime() < Date.now() - 60_000) {
+    if (!pickupAt) {
       context.addIssue({
         code: "custom",
         path: ["pickupDate"],
-        message: "La prise en charge ne peut pas être dans le passé.",
+        message: "Veuillez vérifier la date de prise en charge.",
+      });
+    } else if (input.pickupDate < casablancaCalendarDate()) {
+      context.addIssue({
+        code: "custom",
+        path: ["pickupDate"],
+        message: "La date de prise en charge ne peut pas être dans le passé.",
+      });
+    } else if (
+      input.pickupDate < minimumPickupCalendarDate() ||
+      pickupAt.getTime() < Date.now() - 60_000
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["pickupDate"],
+        message:
+          "Les prises en charge sont prévues à 10:00. Cette heure est passée : choisissez une date ultérieure.",
       });
     }
 

@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { BookingForm } from "@/components/booking/booking-form";
 import { getActiveBookingCars } from "@/lib/booking/fleet";
 import { PICKUP_LOCATIONS } from "@/lib/booking/constants";
-import { casablancaCalendarDate, isReturnAfterDeparture } from "@/lib/booking/datetime";
+import {
+  casablancaCalendarDate,
+  isReturnAfterDeparture,
+  minimumPickupCalendarDate,
+} from "@/lib/booking/datetime";
 import { sanitizeCatalogValues } from "@/lib/catalog/params";
 
 export const metadata: Metadata = {
@@ -30,11 +34,19 @@ export default async function BookingPage({ searchParams }: BookingPageProps) {
     return: param("return"),
   });
   const today = casablancaCalendarDate();
-  const initialPickupDate = trip.pickup && trip.pickup >= today ? trip.pickup : undefined;
+  const minimumPickupDate = minimumPickupCalendarDate();
+  const initialPickupDate =
+    trip.pickup && trip.pickup >= minimumPickupDate ? trip.pickup : undefined;
   const initialReturnDate =
     initialPickupDate && trip.return && isReturnAfterDeparture(initialPickupDate, trip.return)
       ? trip.return
       : undefined;
+  const pickupDateNotice =
+    trip.pickup && trip.pickup < today
+      ? "La date de départ choisie dans votre recherche est passée. Sélectionnez une nouvelle date."
+      : trip.pickup === today && minimumPickupDate > today
+        ? "Les prises en charge sont prévues à 10:00. Cette heure est passée pour aujourd'hui : choisissez demain ou une date ultérieure."
+        : undefined;
   const initialPickupLocation = PICKUP_LOCATIONS.find(
     (location) => location.slug === trip.location,
   )?.label;
@@ -60,6 +72,7 @@ export default async function BookingPage({ searchParams }: BookingPageProps) {
             initialReturnLocation={initialPickupLocation}
             initialPickupDate={initialPickupDate}
             initialReturnDate={initialReturnDate}
+            pickupDateNotice={pickupDateNotice}
           />
         </div>
       </section>
