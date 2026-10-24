@@ -1,12 +1,15 @@
 const CASABLANCA_TIME_ZONE = "Africa/Casablanca";
 
 export function casablancaCalendarDate(date = new Date()): string {
-  return new Intl.DateTimeFormat("en-CA", {
+  const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: CASABLANCA_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(date);
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 export function casablancaCalendarHour(date = new Date()): number {
