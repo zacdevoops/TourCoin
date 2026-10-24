@@ -18,7 +18,7 @@ import { hasListedPrice } from "@/content/product-fleet";
 import { BOOKING_LOCATIONS } from "@/lib/booking/constants";
 import {
   addCalendarDays,
-  casablancaCalendarDate,
+  minimumPickupCalendarDate,
   isReturnAfterDeparture,
   RETURN_DATE_AFTER_DEPARTURE_MESSAGE,
 } from "@/lib/booking/datetime";
@@ -32,6 +32,7 @@ interface BookingFormProps {
   initialReturnLocation?: string;
   initialPickupDate?: string;
   initialReturnDate?: string;
+  pickupDateNotice?: string;
 }
 
 interface BookingApiResponse {
@@ -156,9 +157,19 @@ export function BookingForm({
   initialReturnLocation,
   initialPickupDate,
   initialReturnDate,
+  pickupDateNotice,
 }: BookingFormProps) {
   const router = useRouter();
   const returnDateRef = useRef<HTMLInputElement>(null);
+  const minimumDate = useMemo(() => minimumPickupCalendarDate(), []);
+  const safeInitialPickupDate =
+    initialPickupDate && initialPickupDate >= minimumDate ? initialPickupDate : "";
+  const safeInitialReturnDate =
+    safeInitialPickupDate &&
+    initialReturnDate &&
+    isReturnAfterDeparture(safeInitialPickupDate, initialReturnDate)
+      ? initialReturnDate
+      : "";
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [selectedCarId, setSelectedCarId] = useState(initialCarId ?? cars[0]?.id ?? "");
@@ -168,10 +179,10 @@ export function BookingForm({
   const [returnLocation, setReturnLocation] = useState(
     initialReturnLocation ?? initialPickupLocation ?? "",
   );
-  const [pickupDate, setPickupDate] = useState(initialPickupDate ?? "");
-  const [returnDate, setReturnDate] = useState(initialReturnDate ?? "");
+  const [pickupDate, setPickupDate] = useState(safeInitialPickupDate);
+  const [returnDate, setReturnDate] = useState(safeInitialReturnDate);
   const [returnError, setReturnError] = useState("");
-  const minimumDate = useMemo(() => casablancaCalendarDate(), []);
+  const [showPickupDateNotice, setShowPickupDateNotice] = useState(Boolean(pickupDateNotice));
   const returnMin = pickupDate
     ? addCalendarDays(pickupDate, 1)
     : addCalendarDays(minimumDate, 1);
@@ -187,6 +198,7 @@ export function BookingForm({
   const returnErrorId = "booking-return-date-error";
 
   function onPickupDateChange(value: string) {
+    setShowPickupDateNotice(false);
     setPickupDate(value);
     if (returnDate && !isReturnAfterDeparture(value, returnDate)) {
       setReturnDate("");
@@ -410,6 +422,11 @@ export function BookingForm({
                 onChange={(event) => onPickupDateChange(event.target.value)}
                 suppressHydrationWarning
               />
+              {showPickupDateNotice && pickupDateNotice ? (
+                <span className="mt-2 block text-sm font-normal text-danger" role="status">
+                  {pickupDateNotice}
+                </span>
+              ) : null}
             </label>
             <label className={labelClass}>
               Lieu de retour
