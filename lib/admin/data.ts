@@ -35,7 +35,7 @@ type BookingRow = {
   car_id: string | null;
   car_slug: string;
   car_name: string;
-  car_price_per_day: number;
+  car_price_per_day: number | null;
   currency: "MAD";
   pickup_location: string;
   pickup_at: string;

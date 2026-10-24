@@ -5,6 +5,7 @@ import { hasListedPrice, isYearReview } from "@/content/product-fleet";
 import { carPublicLabel, type Car } from "@/types/domain";
 import { ButtonLink } from "@/components/ui/button-link";
 import { vehicleWhatsAppMessage, whatsappHref, getContactPhoneHref } from "@/lib/contact/channels";
+import { withTripSearch, type TripSearchValues } from "@/lib/catalog/params";
 
 function capitalizeFr(value: string) {
   if (!value) return "";
@@ -20,7 +21,7 @@ function specPills(car: Car) {
   return pills;
 }
 
-export function CarDetail({ car }: { car: Car }) {
+export function CarDetail({ car, tripSearch }: { car: Car; tripSearch?: TripSearchValues }) {
   const isFallback = car.imageUrl.includes("tourcoin-vehicle-fallback");
   const listedPrice = hasListedPrice(car.pricePerDay);
   const category = carPublicLabel(car);
@@ -81,7 +82,7 @@ export function CarDetail({ car }: { car: Car }) {
         )}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <ButtonLink href={`/book?car=${car.id}`} className="min-h-12 w-full px-7 sm:w-auto">
+          <ButtonLink href={withTripSearch(`/book?car=${encodeURIComponent(car.id)}`, tripSearch)} className="min-h-12 w-full px-7 sm:w-auto">
             Réserver ce véhicule
           </ButtonLink>
           {whatsapp ? (

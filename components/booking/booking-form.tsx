@@ -28,6 +28,10 @@ import { carPublicLabel } from "@/types/domain";
 interface BookingFormProps {
   cars: BookingCarOption[];
   initialCarId?: string;
+  initialPickupLocation?: string;
+  initialReturnLocation?: string;
+  initialPickupDate?: string;
+  initialReturnDate?: string;
 }
 
 interface BookingApiResponse {
@@ -145,7 +149,14 @@ function SummaryRow({
   );
 }
 
-export function BookingForm({ cars, initialCarId }: BookingFormProps) {
+export function BookingForm({
+  cars,
+  initialCarId,
+  initialPickupLocation,
+  initialReturnLocation,
+  initialPickupDate,
+  initialReturnDate,
+}: BookingFormProps) {
   const router = useRouter();
   const returnDateRef = useRef<HTMLInputElement>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -153,8 +164,12 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
   const [selectedCarId, setSelectedCarId] = useState(initialCarId ?? cars[0]?.id ?? "");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [pickupDate, setPickupDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
+  const [pickupLocation, setPickupLocation] = useState(initialPickupLocation ?? "");
+  const [returnLocation, setReturnLocation] = useState(
+    initialReturnLocation ?? initialPickupLocation ?? "",
+  );
+  const [pickupDate, setPickupDate] = useState(initialPickupDate ?? "");
+  const [returnDate, setReturnDate] = useState(initialReturnDate ?? "");
   const [returnError, setReturnError] = useState("");
   const minimumDate = useMemo(() => casablancaCalendarDate(), []);
   const returnMin = pickupDate
@@ -164,6 +179,11 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
   const days = rentalDays(pickupDate, returnDate);
   const canCalculate = Boolean(selectedCar && hasListedPrice(selectedCar.pricePerDay) && days > 0);
   const subtotal = canCalculate ? selectedCar.pricePerDay * days : 0;
+  const summaryTotal = canCalculate
+    ? `${money.format(subtotal)} ${selectedCar.currency}`
+    : days > 0 && !hasListedPrice(selectedCar.pricePerDay)
+      ? "À confirmer"
+      : "À calculer";
   const returnErrorId = "booking-return-date-error";
 
   function onPickupDateChange(value: string) {
@@ -174,6 +194,14 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
       returnDateRef.current?.focus();
     } else {
       setReturnError("");
+    }
+  }
+
+  function onPickupLocationChange(value: string) {
+    const previousPickupLocation = pickupLocation;
+    setPickupLocation(value);
+    if (!returnLocation || returnLocation === previousPickupLocation) {
+      setReturnLocation(value);
     }
   }
 
@@ -355,7 +383,13 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <label className={labelClass}>
               Lieu de départ
-              <select className={fieldClass} name="pickupLocation" required>
+              <select
+                className={fieldClass}
+                name="pickupLocation"
+                value={pickupLocation}
+                onChange={(event) => onPickupLocationChange(event.target.value)}
+                required
+              >
                 <option value="">Sélectionnez un lieu</option>
                 {BOOKING_LOCATIONS.map((location) => (
                   <option key={location} value={location}>
@@ -379,7 +413,13 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
             </label>
             <label className={labelClass}>
               Lieu de retour
-              <select className={fieldClass} name="returnLocation" required>
+              <select
+                className={fieldClass}
+                name="returnLocation"
+                value={returnLocation}
+                onChange={(event) => setReturnLocation(event.target.value)}
+                required
+              >
                 <option value="">Sélectionnez un lieu</option>
                 {BOOKING_LOCATIONS.map((location) => (
                   <option key={location} value={location}>
@@ -444,11 +484,11 @@ export function BookingForm({ cars, initialCarId }: BookingFormProps) {
             <SummaryRow label="Nombre de jours" value={days > 0 ? `${days}` : "Sélectionnez vos dates"} />
             <SummaryRow
               label="Sous-total"
-              value={canCalculate ? `${money.format(subtotal)} ${selectedCar.currency}` : "À calculer"}
+              value={summaryTotal}
             />
             <SummaryRow
               label="Total"
-              value={canCalculate ? `${money.format(subtotal)} ${selectedCar.currency}` : "À calculer"}
+              value={summaryTotal}
               strong
             />
           </div>

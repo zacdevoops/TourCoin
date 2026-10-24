@@ -5,8 +5,12 @@ import { CarDetail } from "@/components/cars/car-detail";
 import { ContactChoices } from "@/components/contact/contact-choices";
 import { getCar, getFleet } from "@/lib/fleet/queries";
 import { hasListedPrice } from "@/content/product-fleet";
+import { sanitizeCatalogValues, type TripSearchValues } from "@/lib/catalog/params";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -22,8 +26,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CarPage({ params }: Props) {
-  const { slug } = await params;
+export default async function CarPage({ params, searchParams }: Props) {
+  const [{ slug }, rawSearch] = await Promise.all([params, searchParams]);
+  const queryValue = (key: string) =>
+    typeof rawSearch[key] === "string" ? rawSearch[key] : undefined;
+  const safeSearch = sanitizeCatalogValues({
+    location: queryValue("location"),
+    pickup: queryValue("pickup"),
+    return: queryValue("return"),
+  });
+  const tripSearch: TripSearchValues = {
+    location: safeSearch.location,
+    pickup: safeSearch.pickup,
+    return: safeSearch.return,
+  };
   const result = await getCar(slug);
   if (result.unavailable) {
     return (
@@ -47,13 +63,13 @@ export default async function CarPage({ params }: Props) {
     <div className="bg-paper pb-24 pt-32 text-charcoal sm:pt-36">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="container-shell">
-        <CarDetail car={car} />
+        <CarDetail car={car} tripSearch={tripSearch} />
         {related.length > 0 && (
           <section className="mt-16 border-t border-black/10 pt-14">
             <p className="eyebrow">Dans le même esprit</p>
             <h2 className="mt-3 font-display text-3xl font-semibold">Vous aimerez aussi</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
-              {related.map((item) => <CarCard car={item} key={item.id} />)}
+              {related.map((item) => <CarCard car={item} key={item.id} tripSearch={tripSearch} />)}
             </div>
           </section>
         )}

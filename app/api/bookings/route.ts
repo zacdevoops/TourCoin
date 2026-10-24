@@ -100,7 +100,6 @@ export async function POST(request: Request) {
       .select("id, slug, name, price_per_day, currency")
       .eq("id", parsed.data.carId)
       .eq("active", true)
-      .gt("price_per_day", 0)
       .maybeSingle();
 
     if (carError) {
@@ -116,6 +115,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const listedPrice =
+      typeof car.price_per_day === "number" && car.price_per_day > 0
+        ? car.price_per_day
+        : null;
     const bookingId = crypto.randomUUID();
     const reference = `TC-${bookingId.replaceAll("-", "").slice(0, 8).toUpperCase()}`;
     const { error: insertError } = await supabase
@@ -129,7 +132,7 @@ export async function POST(request: Request) {
         car_id: car.id,
         car_slug: car.slug,
         car_name: car.name,
-        car_price_per_day: car.price_per_day,
+        car_price_per_day: listedPrice,
         currency: car.currency,
         pickup_location: parsed.data.pickupLocation,
         pickup_at: pickupAt.toISOString(),
@@ -152,7 +155,7 @@ export async function POST(request: Request) {
       customerPhone: parsed.data.phone,
       carName: car.name,
       carSlug: car.slug,
-      carPricePerDay: car.price_per_day,
+      carPricePerDay: listedPrice,
       currency: car.currency,
       pickupLocation: parsed.data.pickupLocation,
       pickupAt: pickupAt.toISOString(),

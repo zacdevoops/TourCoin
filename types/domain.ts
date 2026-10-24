@@ -127,7 +127,7 @@ export interface BookingRequest {
   carId: string | null;
   carSlug: string;
   carName: string;
-  carPricePerDay: number;
+  carPricePerDay: number | null;
   currency: "MAD";
   pickupLocation: string;
   pickupAt: string;
