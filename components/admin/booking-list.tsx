@@ -66,7 +66,11 @@ export function BookingList({
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted">Véhicule demandé</p>
               <p className="mt-1 font-medium">{booking.carName}</p>
-              <p className="text-sm text-gold">{money.format(booking.carPricePerDay)} MAD / jour</p>
+              <p className="text-sm text-gold">
+                {booking.carPricePerDay === null
+                  ? "Tarif à confirmer"
+                  : `${money.format(booking.carPricePerDay)} MAD / jour`}
+              </p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted">Départ</p>

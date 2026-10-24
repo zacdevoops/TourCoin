@@ -7,7 +7,7 @@ export interface AdminBookingEmailData {
   customerPhone: string;
   carName: string;
   carSlug: string;
-  carPricePerDay: number;
+  carPricePerDay: number | null;
   currency: string;
   pickupLocation: string;
   pickupAt: string;
@@ -33,7 +33,9 @@ export function buildAdminBookingEmail(data: AdminBookingEmailData) {
     ["Véhicule", `${data.carName} (${data.carSlug})`],
     [
       "Tarif enregistré",
-      `${data.carPricePerDay.toLocaleString("fr-FR")} ${data.currency} / jour`,
+      data.carPricePerDay === null
+        ? "Tarif à confirmer par l’équipe Tourcoin"
+        : `${data.carPricePerDay.toLocaleString("fr-FR")} ${data.currency} / jour`,
     ],
     ["Prise en charge", `${formatDate(data.pickupAt)} — ${data.pickupLocation}`],
     ["Retour", `${formatDate(data.returnAt)} — ${data.returnLocation}`],

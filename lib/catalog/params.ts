@@ -72,3 +72,22 @@ export function sanitizeCatalogValues(
     return: isIsoDate(values.return) ? values.return : undefined,
   };
 }
+export type TripSearchValues = Pick<CatalogSearchValues, "location" | "pickup" | "return">;
+
+export function tripSearchQuery(values: TripSearchValues): string {
+  const safe = sanitizeCatalogValues(values);
+  const params = new URLSearchParams();
+  if (safe.location) params.set("location", safe.location);
+  if (safe.pickup) params.set("pickup", safe.pickup);
+  if (safe.pickup && safe.return && isReturnAfterDeparture(safe.pickup, safe.return)) {
+    params.set("return", safe.return);
+  }
+  return params.toString();
+}
+
+export function withTripSearch(path: string, values?: TripSearchValues): string {
+  if (!values) return path;
+  const query = tripSearchQuery(values);
+  if (!query) return path;
+  return `${path}${path.includes("?") ? "&" : "?"}${query}`;
+}

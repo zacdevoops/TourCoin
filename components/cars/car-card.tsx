@@ -4,8 +4,17 @@ import { ArrowUpRight, Fuel, Gauge, Users } from "lucide-react";
 
 import { hasListedPrice, isYearReview } from "@/content/product-fleet";
 import { carPublicLabel, type Car } from "@/types/domain";
+import { withTripSearch, type TripSearchValues } from "@/lib/catalog/params";
 
-export function CarCard({ car, priority = false }: { car: Car; priority?: boolean }) {
+export function CarCard({
+  car,
+  priority = false,
+  tripSearch,
+}: {
+  car: Car;
+  priority?: boolean;
+  tripSearch?: TripSearchValues;
+}) {
   const isFallback = car.imageUrl.includes("tourcoin-vehicle-fallback");
   const listedPrice = hasListedPrice(car.pricePerDay);
   const price = new Intl.NumberFormat("fr-MA").format(car.pricePerDay);
@@ -17,7 +26,7 @@ export function CarCard({ car, priority = false }: { car: Car; priority?: boolea
 
   return (
     <article className="group overflow-hidden border border-black/10 bg-white text-charcoal transition-shadow hover:shadow-card">
-      <Link href={`/cars/${car.slug}`} className="block" aria-label={`Voir ${car.name}`}>
+      <Link href={withTripSearch(`/cars/${car.slug}`, tripSearch)} className="block" aria-label={`Voir ${car.name}`}>
         <div className="relative aspect-[3/2] overflow-hidden bg-paper-muted">
           <Image
             loading={priority ? "eager" : "lazy"}

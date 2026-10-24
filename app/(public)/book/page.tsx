@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 
 import { BookingForm } from "@/components/booking/booking-form";
 import { getActiveBookingCars } from "@/lib/booking/fleet";
+import { PICKUP_LOCATIONS } from "@/lib/booking/constants";
+import { casablancaCalendarDate, isReturnAfterDeparture } from "@/lib/booking/datetime";
+import { sanitizeCatalogValues } from "@/lib/catalog/params";
 
 export const metadata: Metadata = {
   title: "Réserver une voiture",
@@ -11,18 +14,30 @@ export const metadata: Metadata = {
 };
 
 interface BookingPageProps {
-  searchParams: Promise<{ car?: string | string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function BookingPage({ searchParams }: BookingPageProps) {
-  const [cars, params] = await Promise.all([
-    getActiveBookingCars(),
-    searchParams,
-  ]);
-  const requestedCar = typeof params.car === "string" ? params.car : undefined;
+  const [cars, params] = await Promise.all([getActiveBookingCars(), searchParams]);
+  const param = (key: string) => typeof params[key] === "string" ? params[key] as string : undefined;
+  const requestedCar = param("car");
   const initialCarId = cars.find(
     (car) => car.id === requestedCar || car.slug === requestedCar,
   )?.id;
+  const trip = sanitizeCatalogValues({
+    location: param("location"),
+    pickup: param("pickup"),
+    return: param("return"),
+  });
+  const today = casablancaCalendarDate();
+  const initialPickupDate = trip.pickup && trip.pickup >= today ? trip.pickup : undefined;
+  const initialReturnDate =
+    initialPickupDate && trip.return && isReturnAfterDeparture(initialPickupDate, trip.return)
+      ? trip.return
+      : undefined;
+  const initialPickupLocation = PICKUP_LOCATIONS.find(
+    (location) => location.slug === trip.location,
+  )?.label;
 
   return (
     <div className="min-h-screen bg-paper pb-20 pt-28 text-charcoal sm:pb-24 sm:pt-36">
@@ -38,7 +53,14 @@ export default async function BookingPage({ searchParams }: BookingPageProps) {
           </p>
         </div>
         <div className="mx-auto max-w-7xl">
-          <BookingForm cars={cars} initialCarId={initialCarId} />
+          <BookingForm
+            cars={cars}
+            initialCarId={initialCarId}
+            initialPickupLocation={initialPickupLocation}
+            initialReturnLocation={initialPickupLocation}
+            initialPickupDate={initialPickupDate}
+            initialReturnDate={initialReturnDate}
+          />
         </div>
       </section>
     </div>

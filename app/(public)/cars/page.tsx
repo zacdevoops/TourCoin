@@ -123,7 +123,14 @@ export default async function CarsPage({ searchParams }: { searchParams: Params 
               </div>
             ) : visible.length ? (
               <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                {visible.map((car, index) => <CarCard key={car.id} car={car} priority={index === 0} />)}
+                {visible.map((car, index) => (
+                  <CarCard
+                    key={car.id}
+                    car={car}
+                    priority={index === 0}
+                    tripSearch={{ location: values.location, pickup: values.pickup, return: values.return }}
+                  />
+                ))}
               </div>
             ) : (
               <div className="border-y border-black/10 py-20 text-center">

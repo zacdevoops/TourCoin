@@ -34,7 +34,7 @@ type BookingCarRow = {
   year: Car["year"];
   category: Car["category"];
   segment: Car["segment"];
-  price_per_day: number;
+  price_per_day: number | null;
   currency: Car["currency"];
   fuel: Car["fuel"];
   transmission: Car["transmission"];
@@ -77,7 +77,7 @@ function mapBookingRow(car: BookingCarRow): BookingCarOption {
     year: car.year,
     category: car.category,
     segment: car.segment,
-    pricePerDay: car.price_per_day,
+    pricePerDay: car.price_per_day ?? 0,
     currency: car.currency,
     fuel: car.fuel,
     transmission: car.transmission,
@@ -92,7 +92,6 @@ function mapBookingRow(car: BookingCarRow): BookingCarOption {
 function developmentCars(): BookingCarOption[] {
   return demoCars
     .filter((car) => car.active)
-    .filter((car) => car.pricePerDay > 0)
     .map(mapBookingCar);
 }
 
@@ -111,7 +110,6 @@ export async function getActiveBookingCars(): Promise<BookingCarOption[]> {
       "id, slug, brand, model, name, year, category, segment, price_per_day, currency, fuel, transmission, seats, doors, description, image_url, image_path",
     )
     .eq("active", true)
-    .gt("price_per_day", 0)
     .order("sort_order", { ascending: true })
     .order("name", { ascending: true });
 
